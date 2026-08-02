@@ -1,16 +1,16 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import LinkGrid from "@/components/LinkGrid";
-import { folders, links } from "@/lib/mock-data";
+import NewLinkForm from "@/components/NewLinkForm";
+import { folders } from "@/lib/mock-data";
 
-export default function Home() {
+export default function NewLinkPage() {
   return (
     <div className="flex flex-1 flex-col bg-background">
       <Header />
       <div className="flex flex-1">
         <Sidebar folders={folders} />
-        <main className="flex-1 p-6">
-          <LinkGrid links={links} />
+        <main className="flex flex-1 justify-center p-6">
+          <NewLinkForm folders={folders} />
         </main>
       </div>
     </div>
