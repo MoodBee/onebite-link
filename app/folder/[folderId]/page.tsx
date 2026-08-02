@@ -24,9 +24,14 @@ export default async function FolderPage({ params }: FolderPageProps) {
       <div className="flex flex-1">
         <Sidebar folders={folders} />
         <main className="flex-1 p-6">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
-            {folder.name}
-          </h2>
+          <div className="mb-4 flex items-baseline gap-2">
+            <h2 className="text-lg font-semibold text-foreground">
+              {folder.name}
+            </h2>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              {folderLinks.length}개
+            </span>
+          </div>
           <LinkGrid links={folderLinks} />
         </main>
       </div>
