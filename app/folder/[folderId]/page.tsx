@@ -22,7 +22,7 @@ export default async function FolderPage({ params }: FolderPageProps) {
     <div className="flex flex-1 flex-col bg-background">
       <Header />
       <div className="flex flex-1">
-        <Sidebar folders={folders} />
+        <Sidebar />
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-baseline gap-2">
             <h2 className="text-lg font-semibold text-foreground">

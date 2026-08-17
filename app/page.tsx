@@ -1,14 +1,14 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import LinkGrid from "@/components/LinkGrid";
-import { folders, links } from "@/lib/mock-data";
+import { links } from "@/lib/mock-data";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col bg-background">
       <Header />
       <div className="flex flex-1">
-        <Sidebar folders={folders} />
+        <Sidebar />
         <main className="flex-1 p-6">
           <div className="mb-4 flex items-baseline gap-2">
             <h2 className="text-lg font-semibold text-foreground">전체 링크</h2>

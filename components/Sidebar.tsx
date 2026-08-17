@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import FolderList, { type Folder } from "@/components/FolderList";
+import FolderList from "@/components/FolderList";
+import { useFolders } from "@/lib/folder-context";
 
-type SidebarProps = {
-  folders: Folder[];
-};
-
-export default function Sidebar({ folders }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname();
+  const { folders } = useFolders();
   const isAllActive = pathname === "/";
   const total = folders.reduce((sum, folder) => sum + folder.count, 0);
 
