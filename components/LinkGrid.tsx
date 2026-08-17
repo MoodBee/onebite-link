@@ -1,10 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import LinkCard, { type LinkItem } from "@/components/LinkCard";
+import DeleteLinkModal from "@/components/DeleteLinkModal";
+import { useLinks } from "@/lib/link-context";
 
 type LinkGridProps = {
   links: LinkItem[];
 };
 
 export default function LinkGrid({ links }: LinkGridProps) {
+  const { removeLink } = useLinks();
+  const [pendingDelete, setPendingDelete] = useState<LinkItem | null>(null);
+
+  function handleConfirmDelete() {
+    if (!pendingDelete) return;
+    removeLink(pendingDelete.id);
+    setPendingDelete(null);
+  }
+
   if (links.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border-subtle py-24 text-center">
@@ -22,10 +36,18 @@ export default function LinkGrid({ links }: LinkGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {links.map((link) => (
-        <LinkCard key={link.id} link={link} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {links.map((link) => (
+          <LinkCard key={link.id} link={link} onRequestDelete={setPendingDelete} />
+        ))}
+      </div>
+
+      <DeleteLinkModal
+        link={pendingDelete}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   );
 }

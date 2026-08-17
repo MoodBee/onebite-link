@@ -12,6 +12,7 @@ import type { LinkItem } from "@/components/LinkCard";
 type LinkContextValue = {
   links: LinkItem[];
   addLink: (link: Omit<LinkItem, "id">) => LinkItem;
+  removeLink: (id: string) => void;
 };
 
 const LinkContext = createContext<LinkContextValue | null>(null);
@@ -30,8 +31,12 @@ export function LinkProvider({ initialLinks, children }: LinkProviderProps) {
     return newLink;
   }, []);
 
+  const removeLink = useCallback((id: string) => {
+    setLinks((prev) => prev.filter((link) => link.id !== id));
+  }, []);
+
   return (
-    <LinkContext.Provider value={{ links, addLink }}>
+    <LinkContext.Provider value={{ links, addLink, removeLink }}>
       {children}
     </LinkContext.Provider>
   );
