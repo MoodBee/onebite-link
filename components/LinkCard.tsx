@@ -7,6 +7,8 @@ export type LinkItem = {
   title: string;
   url: string;
   folderId: string;
+  description?: string;
+  thumbnail?: string | null;
 };
 
 type LinkCardProps = {
@@ -24,6 +26,8 @@ function getDomain(url: string) {
 export default function LinkCard({ link }: LinkCardProps) {
   const domain = getDomain(link.url);
   const [faviconFailed, setFaviconFailed] = useState(false);
+  const [thumbnailFailed, setThumbnailFailed] = useState(false);
+  const showThumbnail = Boolean(link.thumbnail) && !thumbnailFailed;
 
   return (
     <a
@@ -33,7 +37,16 @@ export default function LinkCard({ link }: LinkCardProps) {
       className="group flex flex-col gap-3 rounded-xl border border-border-subtle bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-transparent hover:shadow-lg hover:shadow-black/[.06] dark:hover:shadow-black/30"
     >
       <div className="flex h-24 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-indigo-500/10 to-violet-500/10">
-        {faviconFailed ? (
+        {showThumbnail ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={link.thumbnail ?? undefined}
+            alt=""
+            aria-hidden
+            className="h-full w-full object-cover"
+            onError={() => setThumbnailFailed(true)}
+          />
+        ) : faviconFailed ? (
           <span aria-hidden className="text-2xl">
             🔗
           </span>

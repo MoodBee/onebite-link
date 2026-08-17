@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import LinkGrid from "@/components/LinkGrid";
-import { folders, links } from "@/lib/mock-data";
+import FolderLinkGrid from "@/components/FolderLinkGrid";
+import { folders } from "@/lib/mock-data";
 
 type FolderPageProps = {
   params: Promise<{ folderId: string }>;
@@ -16,23 +16,13 @@ export default async function FolderPage({ params }: FolderPageProps) {
     notFound();
   }
 
-  const folderLinks = links.filter((link) => link.folderId === folderId);
-
   return (
     <div className="flex flex-1 flex-col bg-background">
       <Header />
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 p-6">
-          <div className="mb-4 flex items-baseline gap-2">
-            <h2 className="text-lg font-semibold text-foreground">
-              {folder.name}
-            </h2>
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              {folderLinks.length}개
-            </span>
-          </div>
-          <LinkGrid links={folderLinks} />
+          <FolderLinkGrid folderId={folderId} folderName={folder.name} />
         </main>
       </div>
     </div>

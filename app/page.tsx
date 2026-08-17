@@ -1,9 +1,13 @@
+"use client";
+
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import LinkGrid from "@/components/LinkGrid";
-import { links } from "@/lib/mock-data";
+import { useLinks } from "@/lib/link-context";
 
 export default function Home() {
+  const { links } = useLinks();
+
   return (
     <div className="flex flex-1 flex-col bg-background">
       <Header />
