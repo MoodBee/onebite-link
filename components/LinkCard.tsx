@@ -13,6 +13,7 @@ export type LinkItem = {
 
 type LinkCardProps = {
   link: LinkItem;
+  onRequestEdit?: (link: LinkItem) => void;
   onRequestDelete?: (link: LinkItem) => void;
 };
 
@@ -22,6 +23,21 @@ function getDomain(url: string) {
   } catch {
     return url;
   }
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden
+      className="h-3.5 w-3.5"
+    >
+      <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+      <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+    </svg>
+  );
 }
 
 function TrashIcon() {
@@ -42,7 +58,11 @@ function TrashIcon() {
   );
 }
 
-export default function LinkCard({ link, onRequestDelete }: LinkCardProps) {
+export default function LinkCard({
+  link,
+  onRequestEdit,
+  onRequestDelete,
+}: LinkCardProps) {
   const domain = getDomain(link.url);
   const [faviconFailed, setFaviconFailed] = useState(false);
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
@@ -55,19 +75,37 @@ export default function LinkCard({ link, onRequestDelete }: LinkCardProps) {
       rel="noopener noreferrer"
       className="group relative flex flex-col gap-3 rounded-xl border border-border-subtle bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-transparent hover:shadow-lg hover:shadow-black/[.06] dark:hover:shadow-black/30"
     >
-      {onRequestDelete && (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onRequestDelete(link);
-          }}
-          aria-label={`${link.title} 링크 삭제`}
-          className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-zinc-500 opacity-0 shadow-sm backdrop-blur-sm transition-opacity hover:text-red-500 group-hover:opacity-100 dark:bg-zinc-900/90 dark:text-zinc-400"
-        >
-          <TrashIcon />
-        </button>
+      {(onRequestEdit || onRequestDelete) && (
+        <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          {onRequestEdit && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onRequestEdit(link);
+              }}
+              aria-label={`${link.title} 링크 수정`}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-zinc-500 shadow-sm backdrop-blur-sm hover:text-accent dark:bg-zinc-900/90 dark:text-zinc-400"
+            >
+              <PencilIcon />
+            </button>
+          )}
+          {onRequestDelete && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onRequestDelete(link);
+              }}
+              aria-label={`${link.title} 링크 삭제`}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-zinc-500 shadow-sm backdrop-blur-sm hover:text-red-500 dark:bg-zinc-900/90 dark:text-zinc-400"
+            >
+              <TrashIcon />
+            </button>
+          )}
+        </div>
       )}
       <div className="flex h-24 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-indigo-500/10 to-violet-500/10">
         {showThumbnail ? (

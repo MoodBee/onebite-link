@@ -9,10 +9,13 @@ import {
 } from "react";
 import type { LinkItem } from "@/components/LinkCard";
 
+type LinkUpdate = Partial<Pick<LinkItem, "title" | "description" | "folderId">>;
+
 type LinkContextValue = {
   links: LinkItem[];
   addLink: (link: Omit<LinkItem, "id">) => LinkItem;
   removeLink: (id: string) => void;
+  updateLink: (id: string, updates: LinkUpdate) => void;
 };
 
 const LinkContext = createContext<LinkContextValue | null>(null);
@@ -35,8 +38,14 @@ export function LinkProvider({ initialLinks, children }: LinkProviderProps) {
     setLinks((prev) => prev.filter((link) => link.id !== id));
   }, []);
 
+  const updateLink = useCallback((id: string, updates: LinkUpdate) => {
+    setLinks((prev) =>
+      prev.map((link) => (link.id === id ? { ...link, ...updates } : link)),
+    );
+  }, []);
+
   return (
-    <LinkContext.Provider value={{ links, addLink, removeLink }}>
+    <LinkContext.Provider value={{ links, addLink, removeLink, updateLink }}>
       {children}
     </LinkContext.Provider>
   );
