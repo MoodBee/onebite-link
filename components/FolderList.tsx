@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useFolders } from "@/lib/folder-context";
 import DeleteFolderModal from "@/components/DeleteFolderModal";
+import EditFolderModal from "@/components/EditFolderModal";
 
 export type Folder = {
   id: string;
@@ -15,6 +16,21 @@ export type Folder = {
 type FolderListProps = {
   folders: Folder[];
 };
+
+function PencilIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden
+      className="h-3.5 w-3.5"
+    >
+      <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+      <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+    </svg>
+  );
+}
 
 function TrashIcon() {
   return (
@@ -36,13 +52,20 @@ function TrashIcon() {
 
 export default function FolderList({ folders }: FolderListProps) {
   const pathname = usePathname();
-  const { removeFolder } = useFolders();
+  const { removeFolder, renameFolder } = useFolders();
   const [pendingDelete, setPendingDelete] = useState<Folder | null>(null);
+  const [pendingEdit, setPendingEdit] = useState<Folder | null>(null);
 
   function handleConfirmDelete() {
     if (!pendingDelete) return;
     removeFolder(pendingDelete.id);
     setPendingDelete(null);
+  }
+
+  function handleSaveEdit(name: string) {
+    if (!pendingEdit) return;
+    renameFolder(pendingEdit.id, name);
+    setPendingEdit(null);
   }
 
   return (
@@ -74,22 +97,43 @@ export default function FolderList({ folders }: FolderListProps) {
                   {folder.count}
                 </span>
               </Link>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setPendingDelete(folder);
-                }}
-                aria-label={`${folder.name} 폴더 삭제`}
-                className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-zinc-400 opacity-0 transition-opacity hover:bg-black/[.06] hover:text-red-500 group-hover:opacity-100 dark:text-zinc-500 dark:hover:bg-white/[.1]"
-              >
-                <TrashIcon />
-              </button>
+              <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setPendingEdit(folder);
+                  }}
+                  aria-label={`${folder.name} 폴더 이름 수정`}
+                  className="flex h-6 w-6 items-center justify-center rounded-md text-zinc-400 hover:bg-black/[.06] hover:text-accent dark:text-zinc-500 dark:hover:bg-white/[.1]"
+                >
+                  <PencilIcon />
+                </button>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setPendingDelete(folder);
+                  }}
+                  aria-label={`${folder.name} 폴더 삭제`}
+                  className="flex h-6 w-6 items-center justify-center rounded-md text-zinc-400 hover:bg-black/[.06] hover:text-red-500 dark:text-zinc-500 dark:hover:bg-white/[.1]"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
             </li>
           );
         })}
       </ul>
+
+      <EditFolderModal
+        key={pendingEdit?.id ?? "closed"}
+        folder={pendingEdit}
+        onCancel={() => setPendingEdit(null)}
+        onSave={handleSaveEdit}
+      />
 
       <DeleteFolderModal
         folder={pendingDelete}
